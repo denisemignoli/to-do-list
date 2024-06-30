@@ -21,10 +21,25 @@ var tasks = []task{
 func main() {
 	router := gin.Default()
 	router.GET("/tasks", getTasks)
+	router.POST("/tasks", postTasks)
 	router.Run("localhost:8080")
 }
 
 // getTasks responds with the list of all tasks as JSON.
 func getTasks(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, tasks)
+}
+
+// postTasks adds a task from JSON received in the request body.
+func postTasks(c *gin.Context) {
+	var newTask task
+
+	// Call BindJSON to bind the received JSON to newTask.
+	if err := c.BindJSON(&newTask); err != nil {
+		return
+	}
+
+	// Add the new tasks to the slice.
+	tasks = append(tasks, newTask)
+	c.IndentedJSON(http.StatusCreated, newTask)
 }
