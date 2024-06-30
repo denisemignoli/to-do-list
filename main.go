@@ -21,7 +21,9 @@ var tasks = []task{
 func main() {
 	router := gin.Default()
 	router.GET("/tasks", getTasks)
+	router.GET("/tasks/:id", getTaskByID)
 	router.POST("/tasks", postTasks)
+
 	router.Run("localhost:8080")
 }
 
@@ -42,4 +44,18 @@ func postTasks(c *gin.Context) {
 	// Add the new tasks to the slice.
 	tasks = append(tasks, newTask)
 	c.IndentedJSON(http.StatusCreated, newTask)
+}
+
+// getTaskByID locates the task whose ID value matches the id parameter sent by the client, then returns that task as a response.
+func getTaskByID(c *gin.Context) {
+	id := c.Param("id")
+
+	// Loop over the list of tasks, looking for a task whose ID value matches the parameter.
+	for _, t := range tasks {
+		if t.ID == id {
+			c.IndentedJSON(http.StatusOK, t)
+			return
+		}
+	}
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "task not found"})
 }
