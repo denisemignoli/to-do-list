@@ -15,6 +15,12 @@ type TaskMySQLRepository struct {
 	db *sql.DB
 }
 
+func NewTaskMySQLRepository(db *sql.DB) *TaskMySQLRepository {
+	return &TaskMySQLRepository{
+		db: db,
+	}
+}
+
 const (
 	username = "root"
 	password = "code2022"
@@ -23,7 +29,7 @@ const (
 	database = "db_tasks"
 )
 
-func NewTaskMySQLRepository() *TaskMySQLRepository {
+func OpenConnection() *TaskMySQLRepository {
 	// build the DNS
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", username, password, host, port, database)
 	// open the connection
