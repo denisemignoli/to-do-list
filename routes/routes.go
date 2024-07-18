@@ -8,7 +8,7 @@ import (
 
 func SetupRoutes(router *gin.Engine) {
 
-	taskController := controllers.NewTaskController(repositories.NewTaskMySQLRepository())
+	taskController := controllers.NewTaskController(repositories.OpenConnection())
 
 	router.GET("/tasks", taskController.GetTasks)
 	router.GET("/tasks/:id", taskController.GetTaskByID)
