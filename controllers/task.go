@@ -22,26 +22,44 @@ func NewTaskController(repo repositories.TaskRepository) *TaskController {
 var tasks []models.Task
 var nextID int = 1
 
-func (tc *TaskController) GetTasks(c *gin.Context) {
-	tasks := tc.TaskRepository.GetTasks()
+func (tc *TaskController) GetTasksByUser(c *gin.Context) {
+	userIDStr := c.Param("userid")
+	userID, err := strconv.ParseInt(userIDStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	tasks := tc.TaskRepository.GetTasksByUserID(userID)
+
 	c.JSON(http.StatusOK, tasks)
 }
 
 func (tc *TaskController) PostTasks(c *gin.Context) {
+	userIDStr := c.Param("userid")
+	userID, err := strconv.ParseInt(userIDStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
 	var newTask models.Task
 	if err := c.ShouldBindJSON(&newTask); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	newTask.UserID = userID
+
 	id, err := tc.TaskRepository.SaveTask(newTask)
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Failed to save album"})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to save task"})
 		return
 	}
 
 	newTask.ID = id
 
-	c.IndentedJSON(http.StatusCreated, newTask)
+	c.JSON(http.StatusCreated, newTask)
 }
 
 func (tc *TaskController) UpdateTask(c *gin.Context) {
