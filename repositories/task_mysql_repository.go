@@ -18,54 +18,6 @@ func NewTaskMySQLRepository(db *sql.DB) *TaskMySQLRepository {
 	}
 }
 
-// const (
-// 	username = "root"
-// 	password = "code2022"
-// 	host     = "localhost"
-// 	port     = 3306
-// 	database = "db_tasks"
-// )
-
-// func OpenConnection() *TaskMySQLRepository {
-// 	// build the DNS
-// 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", username, password, host, port, database)
-// 	// open the connection
-// 	db, err := sql.Open("mysql", dsn)
-// 	if err != nil {
-// 		log.Fatalf("impossible to create the connection: %s", err)
-// 	}
-// 	err = db.Ping()
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	// execute the script to create the table
-// 	err = executeSQLScript(db, "scripts/create_table.sql")
-// 	if err != nil {
-// 		log.Fatalf("failed to execute the script: %s", err)
-// 	}
-
-// 	return &TaskMySQLRepository{
-// 		db: db,
-// 	}
-// }
-
-// func executeSQLScript(db *sql.DB, filename string) error {
-// 	// read the file
-// 	f, err := os.Open(filename)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	b, err := io.ReadAll(f)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	// execute the script
-// 	_, err = db.Exec(string(b))
-// 	return err
-// }
-
 func (t *TaskMySQLRepository) GetTasksByUserID(userID int64) []models.Task {
 	var tasks []models.Task
 
