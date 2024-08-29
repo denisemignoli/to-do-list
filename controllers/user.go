@@ -23,7 +23,7 @@ type LoginInput struct {
 	Password string `json:"password" binding:"required"`
 }
 
-func (uc *UserController) Register(c *gin.Context) {
+func (uc *UserController) RegisterUser(c *gin.Context) {
 	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -40,7 +40,7 @@ func (uc *UserController) Register(c *gin.Context) {
 	c.JSON(http.StatusCreated, user)
 }
 
-func (uc *UserController) Login(c *gin.Context) {
+func (uc *UserController) LoginUser(c *gin.Context) {
 	var input LoginInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

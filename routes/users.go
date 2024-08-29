@@ -14,6 +14,6 @@ func SetupUserRoutes(router *gin.Engine, db *sql.DB) {
 	userController := controllers.NewUserController(userRepo)
 
 	// Rotas de usuários
-	router.POST("/register", userController.Register)
-	router.POST("/login", userController.Login)
+	router.POST("/register", userController.RegisterUser)
+	router.POST("/login", userController.LoginUser)
 }
