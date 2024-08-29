@@ -31,29 +31,36 @@ func InitDB() (*sql.DB, error) {
 		return nil, err
 	}
 
-	// Criar tabelas aqui se não existirem
+	// Cria as tabelas, se necessário
 	CreateTables(db)
 
 	return db, nil
 }
 
 func CreateTables(db *sql.DB) {
-	// Criação de tabelas
+	// Criação da tabela users
 	_, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS users (
 			id BIGINT AUTO_INCREMENT PRIMARY KEY,
 			username VARCHAR(255) NOT NULL UNIQUE,
 			password VARCHAR(255) NOT NULL
-		);
+		)
+	`)
+	if err != nil {
+		log.Fatal("Erro ao criar tabela users:", err)
+	}
+
+	// Criação da tabela tasks
+	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS tasks (
 			id BIGINT AUTO_INCREMENT PRIMARY KEY,
 			name VARCHAR(255) NOT NULL,
 			completed BOOLEAN NOT NULL DEFAULT 0,
 			user_id BIGINT,
 			FOREIGN KEY (user_id) REFERENCES users(id)
-		);
+		)
 	`)
 	if err != nil {
-		log.Fatal("Erro ao criar tabelas:", err)
+		log.Fatal("Erro ao criar tabela tasks:", err)
 	}
 }
