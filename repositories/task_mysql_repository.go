@@ -18,25 +18,25 @@ func NewTaskMySQLRepository(db *sql.DB) *TaskMySQLRepository {
 	}
 }
 
-func (t *TaskMySQLRepository) GetTasksByUserID(userID int64) []models.Task {
+func (t *TaskMySQLRepository) GetTasksByUserID(userID int64) ([]models.Task, error) {
 	var tasks []models.Task
 
 	rows, err := t.db.Query("SELECT * FROM `tasks` WHERE `user_id` = ?", userID)
-	defer rows.Close()
 
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
+
+	defer rows.Close()
 
 	for rows.Next() {
 		var task models.Task
-		err := rows.Scan(&task.ID, &task.Name, &task.Completed, &task.UserID)
-		if err != nil {
-			log.Fatal(err)
+		if err := rows.Scan(&task.ID, &task.Name, &task.Completed, &task.UserID); err != nil {
+			return nil, err
 		}
 		tasks = append(tasks, task)
 	}
-	return tasks
+	return tasks, nil
 }
 
 func (t *TaskMySQLRepository) GetTasks() []models.Task {

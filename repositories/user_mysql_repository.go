@@ -36,3 +36,12 @@ func (ur *UserMySQLRepository) GetUserByUsername(username string) (*models.User,
 	}
 	return &user, nil
 }
+
+func (ur *UserMySQLRepository) IsUsernameTaken(username string) (bool, error) {
+	var count int
+	err := ur.db.QueryRow("SELECT COUNT(*) FROM users WHERE username = ?", username).Scan(&count)
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}

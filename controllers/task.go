@@ -30,7 +30,7 @@ func (tc *TaskController) GetTasksByUser(c *gin.Context) {
 		return
 	}
 
-	tasks := tc.TaskRepository.GetTasksByUserID(userID)
+	tasks, err := tc.TaskRepository.GetTasksByUserID(userID)
 
 	c.JSON(http.StatusOK, tasks)
 }

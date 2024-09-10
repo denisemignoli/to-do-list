@@ -30,6 +30,16 @@ func (uc *UserController) RegisterUser(c *gin.Context) {
 		return
 	}
 
+	isTaken, err := uc.UserRepository.IsUsernameTaken(user.Username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check username availability"})
+		return
+	}
+	if isTaken {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Username already exists"})
+		return
+	}
+
 	id, err := uc.UserRepository.CreateUser(user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})

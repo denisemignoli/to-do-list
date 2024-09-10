@@ -81,7 +81,7 @@ func (_m *TaskRepository) GetTasks() []models.Task {
 }
 
 // GetTasksByUserID provides a mock function with given fields: userID
-func (_m *TaskRepository) GetTasksByUserID(userID int64) []models.Task {
+func (_m *TaskRepository) GetTasksByUserID(userID int64) ([]models.Task, error) {
 	ret := _m.Called(userID)
 
 	if len(ret) == 0 {
@@ -89,6 +89,10 @@ func (_m *TaskRepository) GetTasksByUserID(userID int64) []models.Task {
 	}
 
 	var r0 []models.Task
+	var r1 error
+	if rf, ok := ret.Get(0).(func(int64) ([]models.Task, error)); ok {
+		return rf(userID)
+	}
 	if rf, ok := ret.Get(0).(func(int64) []models.Task); ok {
 		r0 = rf(userID)
 	} else {
@@ -97,7 +101,13 @@ func (_m *TaskRepository) GetTasksByUserID(userID int64) []models.Task {
 		}
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(int64) error); ok {
+		r1 = rf(userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // SaveTask provides a mock function with given fields: newTask
