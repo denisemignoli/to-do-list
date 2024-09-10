@@ -80,6 +80,36 @@ func (_m *TaskRepository) GetTasks() []models.Task {
 	return r0
 }
 
+// GetTasksByUserID provides a mock function with given fields: userID
+func (_m *TaskRepository) GetTasksByUserID(userID int64) ([]models.Task, error) {
+	ret := _m.Called(userID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetTasksByUserID")
+	}
+
+	var r0 []models.Task
+	var r1 error
+	if rf, ok := ret.Get(0).(func(int64) ([]models.Task, error)); ok {
+		return rf(userID)
+	}
+	if rf, ok := ret.Get(0).(func(int64) []models.Task); ok {
+		r0 = rf(userID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]models.Task)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(int64) error); ok {
+		r1 = rf(userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // SaveTask provides a mock function with given fields: newTask
 func (_m *TaskRepository) SaveTask(newTask models.Task) (int64, error) {
 	ret := _m.Called(newTask)

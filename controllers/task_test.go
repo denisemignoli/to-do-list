@@ -14,28 +14,29 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetTasks(t *testing.T) {
+func TestGetTasksByUser(t *testing.T) {
 	// arrange
 	gin.SetMode(gin.TestMode)
 	router := gin.Default()
 
 	mockRepo := new(mocks.TaskRepository)
-	mockRepo.On("GetTasks").Return([]models.Task{
-		{ID: 1, Name: "Test Task 1", Completed: false},
-		{ID: 2, Name: "Test Task 2", Completed: true},
+	userID := int64(1)
+	mockRepo.On("GetTasksByUserID", userID).Return([]models.Task{
+		{ID: 1, Name: "Test Task 1", Completed: false, UserID: userID},
+		{ID: 2, Name: "Test Task 2", Completed: true, UserID: userID},
 	})
 
 	taskController := controllers.NewTaskController(mockRepo)
-	router.GET("/tasks", taskController.GetTasks)
+	router.GET("/users/:userid/tasks", taskController.GetTasksByUser)
 
 	// act
-	req, _ := http.NewRequest(http.MethodGet, "/tasks", nil)
+	req, _ := http.NewRequest(http.MethodGet, "/users/1/tasks", nil)
 	rr := httptest.NewRecorder()
 	router.ServeHTTP(rr, req)
 
 	// assert
 	assert.Equal(t, http.StatusOK, rr.Code)
-	assert.JSONEq(t, `[{"id":1,"name":"Test Task 1","completed":false},{"id":2,"name":"Test Task 2","completed":true}]`, rr.Body.String())
+	assert.JSONEq(t, `[{"id":1,"name":"Test Task 1","completed":false,"user_id":1},{"id":2,"name":"Test Task 2","completed":true,"user_id":1}]`, rr.Body.String())
 	mockRepo.AssertExpectations(t)
 }
 
@@ -44,14 +45,15 @@ func TestPostTasks(t *testing.T) {
 	router := gin.Default()
 
 	mockRepo := new(mocks.TaskRepository)
-	newTask := models.Task{Name: "New Task", Completed: false}
+	userID := int64(1)
+	newTask := models.Task{Name: "New Task", Completed: false, UserID: userID}
 	mockRepo.On("SaveTask", newTask).Return(int64(1), nil)
 
 	taskController := controllers.NewTaskController(mockRepo)
-	router.POST("/tasks", taskController.PostTasks)
+	router.POST("/users/:userid/tasks", taskController.PostTasks)
 
 	taskJSON, _ := json.Marshal(newTask)
-	req, _ := http.NewRequest(http.MethodPost, "/tasks", bytes.NewBuffer(taskJSON))
+	req, _ := http.NewRequest(http.MethodPost, "/users/1/tasks", bytes.NewBuffer(taskJSON))
 	req.Header.Set("Content-Type", "application/json")
 	rr := httptest.NewRecorder()
 	router.ServeHTTP(rr, req)
